@@ -72,8 +72,8 @@
   <button id="copyBtn">📋 Copy tất cả link</button>
 
   <script>
-    const CLOUD_NAME = "dr5ubqih7"; // 👈 Thay bằng Cloud Name của bạn
-    const UPLOAD_PRESET = "unsigned_preset"; // 👈 Thay bằng Upload Preset (unsigned)
+    const CLOUD_NAME = "dr5ubqih7"; // ← Thay bằng Cloud Name thật của bạn
+    const UPLOAD_PRESET = "unsigned_preset"; // ← Thay bằng Upload Preset
 
     const dropzone = document.getElementById("dropzone");
     const fileInput = document.getElementById("upload");
@@ -103,7 +103,8 @@
           uploaded++;
 
           if (uploaded === total) {
-            linksContainer.innerText = links.join(",\n");
+            // Thêm dấu phẩy cho mỗi dòng (kể cả dòng cuối)
+            linksContainer.innerText = links.map(link => `${link},`).join("\n");
             copyBtn.style.display = "inline-block";
           }
         })
@@ -112,7 +113,7 @@
           uploaded++;
 
           if (uploaded === total) {
-            linksContainer.innerText = links.join(",\n");
+            linksContainer.innerText = links.map(link => `${link},`).join("\n");
             copyBtn.style.display = "inline-block";
           }
         });
@@ -135,14 +136,13 @@
       uploadFiles(e.dataTransfer.files);
     });
 
-    // Click chọn ảnh
+    // Click để mở chọn file
     dropzone.addEventListener("click", () => fileInput.click());
-
     fileInput.addEventListener("change", () => {
       uploadFiles(fileInput.files);
     });
 
-    // Nút Copy
+    // Copy toàn bộ
     copyBtn.addEventListener("click", () => {
       const text = linksContainer.innerText;
       navigator.clipboard.writeText(text)
