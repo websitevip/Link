@@ -68,12 +68,12 @@
   <input type="file" id="upload" multiple accept="image/*" style="display: none;">
   <br>
 
-  <div id="links"></div>
+  <div id="links">💡 Link ảnh sẽ hiện ở đây sau khi upload...</div>
   <button id="copyBtn">📋 Copy tất cả link</button>
 
   <script>
-    const CLOUD_NAME = "dr5ubqih7"; // ví dụ: jayky2k9
-    const UPLOAD_PRESET = "unsigned_preset";
+    const CLOUD_NAME = "dr5ubqih7"; // 👈 Thay bằng Cloud Name của bạn
+    const UPLOAD_PRESET = "unsigned_preset"; // 👈 Thay bằng Upload Preset (unsigned)
 
     const dropzone = document.getElementById("dropzone");
     const fileInput = document.getElementById("upload");
@@ -86,6 +86,7 @@
 
       let uploaded = 0;
       const total = files.length;
+      const links = [];
 
       Array.from(files).forEach(file => {
         const formData = new FormData();
@@ -98,15 +99,22 @@
         })
         .then(res => res.json())
         .then(data => {
-          linksContainer.innerText += `"${data.secure_url}"\n`;
+          links.push(`"${data.secure_url}"`);
           uploaded++;
 
           if (uploaded === total) {
+            linksContainer.innerText = links.join(",\n");
             copyBtn.style.display = "inline-block";
           }
         })
         .catch(err => {
-          linksContainer.innerText += `"❌ Upload lỗi: ${err.message}"\n`;
+          links.push(`"❌ Upload lỗi: ${err.message}"`);
+          uploaded++;
+
+          if (uploaded === total) {
+            linksContainer.innerText = links.join(",\n");
+            copyBtn.style.display = "inline-block";
+          }
         });
       });
     }
