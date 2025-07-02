@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Uploader Cloudinary - Kéo & Thả + Copy</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff;
+      text-align: center;
+      padding: 30px;
+    }
+
+    #dropzone {
+      border: 3px dashed #007BFF;
+      padding: 50px;
+      background: #f9f9f9;
+      color: #555;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+
+    #dropzone.dragover {
+      background: #e0f0ff;
+      border-color: #0056b3;
+    }
+
+    #links {
+      text-align: left;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    #copyBtn {
+      display: none;
+      padding: 10px 20px;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+
+    #copyBtn:hover {
+      background: #0056b3;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📤 Kéo & Thả ảnh hoặc chọn → Tạo Link Cloudinary</h2>
+
+  <div id="dropzone">🚀 Kéo & thả ảnh vào đây hoặc bấm để chọn</div>
+  <input type="file" id="upload" multiple accept="image/*" style="display: none;">
+  <br>
+
+  <div id="links">💡 Link ảnh sẽ hiện ở đây sau khi upload...</div>
+  <button id="copyBtn">📋 Copy tất cả link</button>
+
+  <script>
+    const CLOUD_NAME = "dr5ubqih7"; // ví dụ: jayky2k9
+    const UPLOAD_PRESET = "unsigned_preset";
+
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("upload");
+    const linksContainer = document.getElementById("links");
+    const copyBtn = document.getElementById("copyBtn");
+
+    function uploadFiles(files) {
+      linksContainer.innerText = "";
+      copyBtn.style.display = "none";
+
+      let uploaded = 0;
+      const total = files.length;
+
+      Array.from(files).forEach(file => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", UPLOAD_PRESET);
+
+        fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: "POST",
+          body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+          linksContainer.innerText += `"${data.secure_url}"\n`;
+          uploaded++;
+
+          if (uploaded === total) {
+            copyBtn.style.display = "inline-block";
+          }
+        })
+        .catch(err => {
+          linksContainer.innerText += `"❌ Upload lỗi: ${err.message}"\n`;
+        });
+      });
+    }
+
+    // Kéo & thả
+    dropzone.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropzone.classList.add("dragover");
+    });
+
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.classList.remove("dragover");
+    });
+
+    dropzone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+      uploadFiles(e.dataTransfer.files);
+    });
+
+    // Click chọn ảnh
+    dropzone.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", () => {
+      uploadFiles(fileInput.files);
+    });
+
+    // Nút Copy
+    copyBtn.addEventListener("click", () => {
+      const text = linksContainer.innerText;
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          copyBtn.innerText = "✅ Đã copy!";
+          setTimeout(() => {
+            copyBtn.innerText = "📋 Copy tất cả link";
+          }, 2000);
+        })
+        .catch(() => {
+          alert("❌ Không thể copy tự động. Hãy chọn thủ công.");
+        });
+    });
+  </script>
+</body>
+</html>
