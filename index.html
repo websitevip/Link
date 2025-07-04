@@ -100,7 +100,7 @@
         .then(res => res.json())
         .then(data => {
           // ✅ Chỉnh link sang chất lượng cao (q_100)
-          const hqLink = data.secure_url.replace("/upload/", "/upload/q_1000/");
+          const hqLink = data.secure_url.replace("/upload/", "/upload/q_10000000/");
           links.push(`"${hqLink}"`);
           uploaded++;
 
