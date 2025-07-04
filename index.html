@@ -99,11 +99,12 @@
         })
         .then(res => res.json())
         .then(data => {
-          links.push(`"${data.secure_url}"`);
+          // ✅ Chỉnh link sang chất lượng cao (q_100)
+          const hqLink = data.secure_url.replace("/upload/", "/upload/q_1000/");
+          links.push(`"${hqLink}"`);
           uploaded++;
 
           if (uploaded === total) {
-            // Thêm dấu phẩy cho mỗi dòng (kể cả dòng cuối)
             linksContainer.innerText = links.map(link => `${link},`).join("\n");
             copyBtn.style.display = "inline-block";
           }
