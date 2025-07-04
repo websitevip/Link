@@ -93,7 +93,7 @@
         formData.append("file", file);
         formData.append("upload_preset", UPLOAD_PRESET);
 
-        fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload/q_1000`, {
           method: "POST",
           body: formData
         })
